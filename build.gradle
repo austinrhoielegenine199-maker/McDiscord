@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.mcdiscord'
+version = '1.0.0'
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://repo.codemc.io/repository/maven-public/' }
+}
+
+dependencies {
+    // Paper API 1.21.1
+    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    
+    // JDA 5.6.1
+    implementation 'net.dv8tion:JDA:5.6.1'
+    
+    // LuckPerms API
+    compileOnly 'net.luckperms:api:5.4'
+    
+    // YAML configuration
+    compileOnly 'org.yaml:snakeyaml:2.0'
+    
+    // Logging
+    compileOnly 'org.slf4j:slf4j-api:2.0.5'
+}
+
+tasks.named('jar') {
+    archiveFileName = 'DiscordHookSRV.jar'
+}
+
+shadowJar {
+    archiveFileName = 'DiscordHookSRV-shadow.jar'
+    relocate 'net.dv8tion.jda', 'com.mcdiscord.jda'
+}
