@@ -1,76 +1,55 @@
 package com.mcdiscord.discordhooksrv.commands;
 
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mcdiscord.discordhooksrv.DiscordHookSRV;
 import com.mcdiscord.discordhooksrv.managers.ConfigManager;
 import com.mcdiscord.discordhooksrv.managers.LinkManager;
+import com.mcdiscord.discordhooksrv.utility.EmbedManager;
 
-public class DiscordLinkCommand extends ListenerAdapter {
-    private final DiscordHookSRV plugin;
-    private final ConfigManager configManager;
+public class DiscordLinkCommand implements CommandExecutor {
+    private final JavaPlugin plugin;
     private final LinkManager linkManager;
+    private final ConfigManager configManager;
 
-    public DiscordLinkCommand(DiscordHookSRV plugin, ConfigManager configManager, LinkManager linkManager) {
+    public DiscordLinkCommand(JavaPlugin plugin, LinkManager linkManager, ConfigManager configManager) {
         this.plugin = plugin;
-        this.configManager = configManager;
         this.linkManager = linkManager;
+        this.configManager = configManager;
     }
 
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if (event.getName().equals("link")) {
-            handleLinkCommand(event);
-        } else if (event.getName().equals("unlink")) {
-            handleUnlinkCommand(event);
-        }
-    }
-
-    private void handleLinkCommand(SlashCommandInteractionEvent event) {
-        if (event.getSubcommandName() == null) {
-            // Generate new code
-            generateNewLinkCode(event);
-        } else if (event.getSubcommandName().equals("code")) {
-            // Complete linking with code
-            String code = event.getOption("code").getAsString();
-            completeLinking(event, code);
-        }
-    }
-
-    private void generateNewLinkCode(SlashCommandInteractionEvent event) {
-        String discordId = event.getUser().getId();
-
-        // Check if already linked
-        if (linkManager.getLinkManager().getLinkedMinecraftUuid(discordId) != null) {
-            event.reply("You are already linked to a Minecraft account.").setEphemeral(true).queue();
-            return;
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(EmbedManager.colorize("&cOnly players can use this command!"));
+            return true;
         }
 
-        // Generate code
-        var code = linkManager.generateLinkCode();
-        event.reply("Your linking code is: **" + code.getCode() + "**\n" +
-            "Use `/link " + code.getCode() + "` in Minecraft within " + code.getExpirationMinutes() + " minutes.")
-            .setEphemeral(true).queue();
-    }
+        Player player = (Player) sender;
 
-    private void completeLinking(SlashCommandInteractionEvent event, String codeStr) {
-        event.reply("Linking in progress...").setEphemeral(true).queue();
-    }
-
-    private void handleUnlinkCommand(SlashCommandInteractionEvent event) {
-        String discordId = event.getUser().getId();
-
-        // Check if linked
-        var uuid = linkManager.getLinkManager().getLinkedMinecraftUuid(discordId);
-        if (uuid == null) {
-            event.reply("You are not linked to a Minecraft account.").setEphemeral(true).queue();
-            return;
+        if (command.getName().equalsIgnoreCase("link")) {
+            if (args.length == 0) {
+                String code = linkManager.generateLinkCode();
+                player.sendMessage(EmbedManager.colorize("&a&lLink Code: " + code));
+                player.sendMessage(EmbedManager.colorize("&7Use /discord link " + code + " in Discord"));
+            } else {
+                String code = args[0];
+                if (linkManager.validateCode(code, player.getUniqueId().toString())) {
+                    linkManager.linkPlayer(player, player.getUniqueId().toString());
+                    player.sendMessage(EmbedManager.colorize(configManager.getLinkSuccessMessage()));
+                } else {
+                    player.sendMessage(EmbedManager.colorize(configManager.getLinkInvalidMessage()));
+                }
+            }
+        } else if (command.getName().equalsIgnoreCase("unlink")) {
+            linkManager.unlinkPlayer(player);
+            player.sendMessage(EmbedManager.colorize(configManager.getUnlinkSuccessMessage()));
         }
 
-        // Unlink
-        linkManager.unlinkAccounts(uuid);
-        event.reply("You have been unlinked from your Minecraft account.").setEphemeral(true).queue();
+        return true;
     }
 }
