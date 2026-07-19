@@ -15,6 +15,7 @@ public class LinkManager {
     private final Map<String, String> linkCodes = new HashMap<>();
     private final Map<String, Long> codeExpiration = new HashMap<>();
     private final Map<String, String> playerToDiscord = new HashMap<>();
+    private final Map<String, String> codeToDiscordId = new HashMap<>();
 
     public LinkManager(JavaPlugin plugin, ConfigManager configManager) {
         this.plugin = plugin;
@@ -22,24 +23,35 @@ public class LinkManager {
         loadLinks();
     }
 
-    public String generateLinkCode() {
+    public String generateLinkCode(String discordId) {
         String code = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         long expiration = System.currentTimeMillis() + (configManager.getLinkCodeExpirationMinutes() * 60 * 1000);
-        linkCodes.put(code, "");
+        linkCodes.put(code, discordId);
         codeExpiration.put(code, expiration);
+        codeToDiscordId.put(code, discordId);
         return code;
     }
 
-    public boolean validateCode(String code, String discordId) {
+    public String generateLinkCode() {
+        return generateLinkCode("");
+    }
+
+    public boolean validateCode(String code, String minecraftUuid) {
         if (!linkCodes.containsKey(code)) {
             return false;
         }
         if (System.currentTimeMillis() > codeExpiration.getOrDefault(code, 0L)) {
             linkCodes.remove(code);
             codeExpiration.remove(code);
+            codeToDiscordId.remove(code);
             return false;
         }
-        linkCodes.put(code, discordId);
+        
+        String discordId = linkCodes.get(code);
+        playerToDiscord.put(minecraftUuid, discordId);
+        linkCodes.remove(code);
+        codeExpiration.remove(code);
+        saveLinks();
         return true;
     }
 
@@ -55,6 +67,10 @@ public class LinkManager {
 
     public String getDiscordId(Player player) {
         return playerToDiscord.get(player.getUniqueId().toString());
+    }
+
+    public String getDiscordIdFromCode(String code) {
+        return codeToDiscordId.get(code);
     }
 
     private void saveLinks() {
