@@ -5,7 +5,7 @@ main: com.mcdiscord.discordhooksrv.DiscordHookSRV
 api-version: 1.20
 
 authors:
-  - austinrhoielegenine199-maker
+  - ArchiveAustin
 
 commands:
   link:
@@ -17,6 +17,11 @@ commands:
   unlink:
     description: Unlink your Minecraft account from Discord
     usage: /unlink
+  mcdiscord:
+    description: Main plugin command
+    usage: /mcdiscord reload
+    aliases:
+      - dhs
 
 permissions:
   discordhooksrv.link:
@@ -27,4 +32,7 @@ permissions:
     default: true
   discordhooksrv.admin:
     description: Allows admin commands
+    default: op
+  discordhooksrv.reload:
+    description: Allows reloading plugin config
     default: op

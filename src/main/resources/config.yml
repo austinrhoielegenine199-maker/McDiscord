@@ -1,14 +1,26 @@
 # DiscordHookSRV Configuration
+# Made By ArchiveAustin
 
+# Discord bot token - Get from Discord Developer Portal
+# CRITICAL: Never share your real token
 bot-token: "PASTE_YOUR_BOT_TOKEN_HERE"
+
+# Minecraft server IP for !ip command
 server-ip: "your.server.ip"
+
+# Discord role ID to give linked players
+# Get the role ID by enabling developer mode in Discord and right-clicking the role
 linked-role-id: "DISCORD_ROLE_ID"
+
+# Link code expiration time in minutes
 link-code-expiration-minutes: 5
 
+# Nickname synchronization settings
 nickname-sync:
   enabled: true
   reset-on-unlink: true
 
+# Rank/group synchronization using LuckPerms
 rank-sync:
   enabled: true
   groups:
@@ -17,6 +29,7 @@ rank-sync:
     moderator: "DISCORD_ROLE_ID"
     admin: "DISCORD_ROLE_ID"
 
+# !ip command configuration
 ip:
   enabled: true
   command: "!ip"
@@ -26,9 +39,10 @@ ip:
     color: "#5865F2"
     thumbnail: ""
     image: ""
-    footer: "DiscordHookSRV"
+    footer: "DiscordHookSRV - Made By ArchiveAustin"
     fields: []
 
+# !online command configuration
 online:
   enabled: true
   command: "!online"
@@ -38,7 +52,7 @@ online:
     color: "#57F287"
     thumbnail: ""
     image: ""
-    footer: "DiscordHookSRV"
+    footer: "DiscordHookSRV - Made By ArchiveAustin"
     fields:
       - name: "Players"
         value: "{online}/{max}"
@@ -47,15 +61,20 @@ online:
         value: "{players}"
         inline: false
 
+# Minecraft command messages
 messages:
   link-success: "&aYour Minecraft account has been linked successfully!"
   link-invalid: "&cThat linking code is invalid or expired."
   already-linked: "&cThis account is already linked."
   unlink-success: "&aYour account has been unlinked."
   link-usage: "&cUsage: /link <code>"
+  reload-success: "&a&lDiscordHookSRV reloaded successfully!"
+  reload-failed: "&c&lFailed to reload DiscordHookSRV!"
 
+# Discord messages
 discord:
   link-success-dm: "Your Minecraft account \"{username}\" has been successfully linked to Discord."
   unlink-success-dm: "Your Minecraft account has been unlinked from Discord."
 
+# Debug mode
 debug: false
