@@ -19,20 +19,20 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
     
-    - name: Build with Gradle
-      run: chmod +x ./gradlew && ./gradlew shadowJar
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
     
     - name: Upload JAR to Releases
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: build/libs/DiscordHookSRV-shadow.jar
+        files: target/DiscordHookSRV.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: DiscordHookSRV-shadow.jar
-        path: build/libs/DiscordHookSRV-shadow.jar
+        name: DiscordHookSRV.jar
+        path: target/DiscordHookSRV.jar
         retention-days: 30
