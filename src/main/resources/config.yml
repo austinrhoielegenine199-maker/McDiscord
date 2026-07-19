@@ -1,0 +1,61 @@
+# DiscordHookSRV Configuration
+
+bot-token: "PASTE_YOUR_BOT_TOKEN_HERE"
+server-ip: "your.server.ip"
+linked-role-id: "DISCORD_ROLE_ID"
+link-code-expiration-minutes: 5
+
+nickname-sync:
+  enabled: true
+  reset-on-unlink: true
+
+rank-sync:
+  enabled: true
+  groups:
+    default: "DISCORD_ROLE_ID"
+    vip: "DISCORD_ROLE_ID"
+    moderator: "DISCORD_ROLE_ID"
+    admin: "DISCORD_ROLE_ID"
+
+ip:
+  enabled: true
+  command: "!ip"
+  embed:
+    title: "Minecraft Server"
+    description: "Join us at {ip}"
+    color: "#5865F2"
+    thumbnail: ""
+    image: ""
+    footer: "DiscordHookSRV"
+    fields: []
+
+online:
+  enabled: true
+  command: "!online"
+  embed:
+    title: "Server Status"
+    description: "Status: {status}"
+    color: "#57F287"
+    thumbnail: ""
+    image: ""
+    footer: "DiscordHookSRV"
+    fields:
+      - name: "Players"
+        value: "{online}/{max}"
+        inline: true
+      - name: "Online Players"
+        value: "{players}"
+        inline: false
+
+messages:
+  link-success: "&aYour Minecraft account has been linked successfully!"
+  link-invalid: "&cThat linking code is invalid or expired."
+  already-linked: "&cThis account is already linked."
+  unlink-success: "&aYour account has been unlinked."
+  link-usage: "&cUsage: /link <code>"
+
+discord:
+  link-success-dm: "Your Minecraft account \"{username}\" has been successfully linked to Discord."
+  unlink-success-dm: "Your Minecraft account has been unlinked from Discord."
+
+debug: false
