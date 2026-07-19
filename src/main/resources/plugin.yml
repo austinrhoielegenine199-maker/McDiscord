@@ -1,0 +1,21 @@
+name: McDiscord
+version: 1.0.0
+main: com.mcdiscord.McDiscord
+description: Discord account linking plugin for Minecraft servers
+authors:
+  - YourName
+api-version: "1.21"
+
+commands:
+  link:
+    description: Link your Minecraft account to Discord
+    usage: /link <code>
+    aliases: [discordlink, linkdc]
+
+permissions:
+  mcdiscord.link:
+    description: Allows player to use /link command
+    default: true
+  mcdiscord.admin:
+    description: Allows admin access to McDiscord commands
+    default: op
